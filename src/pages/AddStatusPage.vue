@@ -91,7 +91,7 @@ export default {
                 this.processing = false;
 
                 if (res.ok) {
-                    location.href = "/status/" + res.slug + "?edit";
+                    location.href = this.$withBasePath("/status/" + res.slug + "?edit");
                 } else {
                     if (res.msg.includes("UNIQUE constraint")) {
                         this.$root.toastError("The slug is already taken. Please choose another slug.");

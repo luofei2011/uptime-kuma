@@ -12,7 +12,7 @@
                 <li v-for="(notification, index) in $root.notificationList" :key="index" class="list-group-item">
                     {{ notification.name }}
                     <br />
-                    <a href="#" @click="$refs.notificationDialog.show(notification.id)">{{ $t("Edit") }}</a>
+                    <a href="#" @click.prevent="$refs.notificationDialog.show(notification.id)">{{ $t("Edit") }}</a>
                 </li>
             </ul>
 

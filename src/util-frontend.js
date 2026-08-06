@@ -71,19 +71,70 @@ export function setPageLocale() {
 }
 
 /**
+ * Get the normalized public base path embedded by Vite at build time.
+ * @returns {string} Base path without a trailing slash, except for root
+ */
+export function getBasePath() {
+    // eslint-disable-next-line no-undef
+    return UPTIME_KUMA_BASE_PATH;
+}
+
+/**
+ * Prefix an application path with the public base path.
+ * @param {string} path Application path
+ * @returns {string} Public path
+ */
+export function withBasePath(path) {
+    const basePath = getBasePath();
+    const absolutePath = path.startsWith("/") ? path : "/" + path;
+
+    if (basePath === "/" || absolutePath === basePath || absolutePath.startsWith(basePath + "/")) {
+        return absolutePath;
+    }
+
+    return basePath + absolutePath;
+}
+
+/**
+ * Remove the public base path from a browser location path.
+ * @param {string} path Browser location path
+ * @returns {string} Application route path
+ */
+export function withoutBasePath(path) {
+    const basePath = getBasePath();
+
+    if (basePath === "/") {
+        return path;
+    }
+
+    if (path === basePath) {
+        return "/";
+    }
+
+    if (path.startsWith(basePath + "/")) {
+        return path.slice(basePath.length) || "/";
+    }
+
+    return path;
+}
+
+/**
  * Get the base URL
  * Mainly used for dev, because the backend and the frontend are in different ports.
  * @returns {string} Base URL
  */
 export function getResBaseURL() {
     const env = process.env.NODE_ENV;
+    let origin = "";
+
     if (env === "development" && isDevContainer()) {
-        return location.protocol + "//" + getDevContainerServerHostname();
+        origin = location.protocol + "//" + getDevContainerServerHostname();
     } else if (env === "development" || localStorage.dev === "dev") {
-        return location.protocol + "//" + location.hostname + ":3001";
-    } else {
-        return "";
+        origin = location.protocol + "//" + location.hostname + ":3001";
     }
+
+    const basePath = getBasePath();
+    return origin + (basePath === "/" ? "" : basePath);
 }
 
 /**

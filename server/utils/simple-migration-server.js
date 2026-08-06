@@ -1,6 +1,8 @@
 const express = require("express");
 const http = require("node:http");
 const { printServerUrls } = require("../util-server");
+const { basePath, basePathRoot } = require("../config");
+const { createBasePathMiddleware, withBasePath } = require("../base-path");
 
 /**
  * SimpleMigrationServer
@@ -34,6 +36,7 @@ class SimpleMigrationServer {
      */
     start(port, hostname) {
         this.app = express();
+        this.app.use(createBasePathMiddleware(basePath));
         this.server = http.createServer(this.app);
 
         this.app.get("/", (req, res) => {
@@ -45,7 +48,7 @@ class SimpleMigrationServer {
                 <head><title>Uptime Kuma Migration</title></head>
                 <body>
                     Migration is in progress, it may take some time. You can check the progress in the console, or
-                    <a href="/migrate-status" target="_blank">click here to check</a>.
+                    <a href="${withBasePath("/migrate-status", basePath)}" target="_blank">click here to check</a>.
                 </body>
                 </html>
             `);
@@ -64,7 +67,7 @@ class SimpleMigrationServer {
 
         return new Promise((resolve) => {
             this.server.listen(port, hostname, () => {
-                printServerUrls("migration", port, hostname);
+                printServerUrls("migration", port, hostname, false, basePathRoot);
                 resolve();
             });
         });

@@ -14,9 +14,9 @@
                     {{ proxy.host }}:{{ proxy.port }} ({{ proxy.protocol }})
                     <span v-if="proxy.default === true" class="badge bg-primary ms-2">{{ $t("Default") }}</span>
                     <br />
-                    <a href="#" @click="$refs.proxyDialog.show(proxy.id)">{{ $t("Edit") }}</a>
+                    <a href="#" @click.prevent="$refs.proxyDialog.show(proxy.id)">{{ $t("Edit") }}</a>
                     |
-                    <a href="#" @click="$refs.proxyDialog.showClone(proxy.id)">{{ $t("Clone") }}</a>
+                    <a href="#" @click.prevent="$refs.proxyDialog.showClone(proxy.id)">{{ $t("Clone") }}</a>
                 </li>
             </ul>
 

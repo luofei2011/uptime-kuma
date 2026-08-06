@@ -170,7 +170,11 @@
 
             <!-- Push Examples -->
             <div v-if="monitor.type === 'push'" class="shadow-box big-padding">
-                <a href="#" @click="pushMonitor.showPushExamples = !pushMonitor.showPushExamples">
+                <a
+                    href="#"
+                    data-testid="push-example-toggle"
+                    @click.prevent="pushMonitor.showPushExamples = !pushMonitor.showPushExamples"
+                >
                     {{ $t("pushViewCode") }}
                 </a>
 

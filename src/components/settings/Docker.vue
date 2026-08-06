@@ -9,7 +9,7 @@
                 <li v-for="(dockerHost, index) in $root.dockerHostList" :key="index" class="list-group-item">
                     {{ dockerHost.name }}
                     <br />
-                    <a href="#" @click="$refs.dockerHostDialog.show(dockerHost.id)">{{ $t("Edit") }}</a>
+                    <a href="#" @click.prevent="$refs.dockerHostDialog.show(dockerHost.id)">{{ $t("Edit") }}</a>
                 </li>
             </ul>
 

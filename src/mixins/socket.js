@@ -11,6 +11,8 @@ import {
     isDevContainer,
     getToastSuccessTimeout,
     getToastErrorTimeout,
+    withBasePath,
+    withoutBasePath,
 } from "../util-frontend.js";
 const toast = useToast();
 
@@ -89,16 +91,18 @@ export default {
             }
 
             // No need to connect to the socket.io for status page
-            if (!bypass && location.pathname) {
+            const routePath = withoutBasePath(location.pathname);
+
+            if (!bypass && routePath) {
                 for (let page of noSocketIOPages) {
-                    if (location.pathname.match(page)) {
+                    if (routePath.match(page)) {
                         return;
                     }
                 }
             }
 
             // Also don't need to connect to the socket.io for setup database page
-            if (location.pathname === "/setup-database") {
+            if (routePath === "/setup-database") {
                 return;
             }
 
@@ -117,7 +121,9 @@ export default {
                 url = undefined;
             }
 
-            socket = io(url);
+            socket = io(url, {
+                path: withBasePath("/socket.io"),
+            });
 
             socket.on("info", (info) => {
                 this.info = info;

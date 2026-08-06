@@ -7,6 +7,8 @@ const { R } = require("redbean-node");
 const { badgeConstants } = require("../../src/util");
 const { makeBadge } = require("badge-maker");
 const { UptimeCalculator } = require("../uptime-calculator");
+const { basePath } = require("../config");
+const { withBasePath } = require("../base-path");
 
 let router = express.Router();
 
@@ -127,11 +129,11 @@ router.get("/api/status-page/:slug/manifest.json", cache("1440 minutes"), async 
         // Response
         response.json({
             name: statusPage.title,
-            start_url: "/status/" + statusPage.slug,
+            start_url: withBasePath("/status/" + statusPage.slug, basePath),
             display: "standalone",
             icons: [
                 {
-                    src: statusPage.icon,
+                    src: withBasePath(statusPage.icon, basePath),
                     sizes: "128x128",
                     type: "image/png",
                 },

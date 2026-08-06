@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { getSqliteDatabaseExists, login, screenshot, takeSqliteSnapshot } from "../util-test";
+import { appPath, getSqliteDatabaseExists, login, screenshot, takeSqliteSnapshot } from "../util-test";
 
 test.describe("Uptime Kuma Setup", () => {
     test.skip(() => getSqliteDatabaseExists(), "Must only run once per session");
@@ -17,7 +17,7 @@ test.describe("Uptime Kuma Setup", () => {
         await page.getByText("SQLite").click();
         await page.getByRole("button", { name: "Next" }).click();
         await screenshot(testInfo, page);
-        await page.waitForURL("/setup"); // ensures the server is ready to continue to the next test
+        await page.waitForURL(appPath("/setup")); // ensures the server is ready to continue to the next test
     });
 
     test("setup admin", async ({ page }) => {

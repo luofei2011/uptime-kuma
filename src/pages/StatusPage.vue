@@ -280,10 +280,10 @@
                         {{ $t("Edit Status Page") }}
                     </button>
 
-                    <a href="/manage-status-page" class="btn btn-primary mb-2">
+                    <router-link to="/manage-status-page" class="btn btn-primary mb-2">
                         <font-awesome-icon icon="tachometer-alt" />
                         {{ $t("Go to Dashboard") }}
-                    </a>
+                    </router-link>
                 </div>
 
                 <div v-else>
@@ -1025,9 +1025,9 @@ export default {
 
                 this.updateUpdateTimer();
             })
-            .catch(function (error) {
+            .catch((error) => {
                 if (error.response.status === 404) {
-                    location.href = "/page-not-found";
+                    location.href = this.$withBasePath("/page-not-found");
                 }
                 console.log(error);
             });
@@ -1168,7 +1168,7 @@ export default {
 
                         setTimeout(() => {
                             this.loading = false;
-                            location.href = "/status/" + this.config.slug;
+                            location.href = this.$withBasePath("/status/" + this.config.slug);
                         }, time);
                     } else {
                         this.loading = false;
@@ -1193,7 +1193,7 @@ export default {
             this.$root.getSocket().emit("deleteStatusPage", this.slug, (res) => {
                 if (res.ok) {
                     this.enableEditMode = false;
-                    location.href = "/manage-status-page";
+                    location.href = this.$withBasePath("/manage-status-page");
                 } else {
                     this.$root.toastError(res.msg);
                 }
@@ -1239,7 +1239,7 @@ export default {
          * @returns {void}
          */
         discard() {
-            location.href = "/status/" + this.slug;
+            location.href = this.$withBasePath("/status/" + this.slug);
         },
 
         /**

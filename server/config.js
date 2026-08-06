@@ -1,4 +1,5 @@
 const isFreeBSD = /^freebsd/.test(process.platform);
+const { normalizeBasePath, basePathWithTrailingSlash } = require("./base-path");
 
 // Interop with browser
 const args = typeof process !== "undefined" ? require("args-parser")(process.argv) : {};
@@ -36,6 +37,8 @@ function getLocalWebSocketURL() {
 const localWebSocketURL = getLocalWebSocketURL();
 
 const demoMode = args["demo"] || false;
+const basePath = normalizeBasePath(process.env.UPTIME_KUMA_BASE_PATH);
+const basePathRoot = basePathWithTrailingSlash(basePath);
 
 module.exports = {
     args,
@@ -47,4 +50,6 @@ module.exports = {
     isSSL,
     localWebSocketURL,
     demoMode,
+    basePath,
+    basePathRoot,
 };

@@ -1,7 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const port = 30001;
-export const url = `http://localhost:${port}`;
+const configuredBasePath = process.env.UPTIME_KUMA_BASE_PATH || "/";
+export const basePath =
+    (configuredBasePath.startsWith("/") ? configuredBasePath : "/" + configuredBasePath).replace(/\/+$/, "") || "/";
+export const appPath = (path) => (basePath === "/" ? path : basePath + path);
+export const url = `http://localhost:${port}${basePath === "/" ? "/" : basePath + "/"}`;
 
 export default defineConfig({
     // Look for test files in the "tests" directory, relative to this configuration file.
@@ -61,6 +65,10 @@ export default defineConfig({
     webServer: {
         command: `node extra/remove-playwright-test-data.js && cross-env NODE_ENV=development node server/server.js --port=${port} --data-dir=./data/playwright-test`,
         url,
+        env: {
+            ...process.env,
+            UPTIME_KUMA_BASE_PATH: basePath,
+        },
         reuseExistingServer: false,
         cwd: "../",
     },

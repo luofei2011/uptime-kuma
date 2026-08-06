@@ -224,7 +224,7 @@
 <script>
 import HiddenInput from "../../components/HiddenInput.vue";
 import dayjs from "dayjs";
-import { timezoneList } from "../../util-frontend";
+import { getBasePath, timezoneList } from "../../util-frontend";
 
 export default {
     components: {
@@ -266,7 +266,9 @@ export default {
          * @returns {void}
          */
         autoGetPrimaryBaseURL() {
-            this.settings.primaryBaseURL = location.protocol + "//" + location.host;
+            const basePath = getBasePath();
+            this.settings.primaryBaseURL =
+                location.protocol + "//" + location.host + (basePath === "/" ? "" : basePath);
         },
         /**
          * Test the chrome executable

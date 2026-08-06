@@ -288,7 +288,8 @@ export default {
             if (!this.monitor.id || !this.badge.type) {
                 return;
             }
-            let badgeURL = new URL(this.$root.baseURL).origin + "/api/badge/" + this.monitor.id + "/" + this.badge.type;
+            let badgeURL =
+                this.$root.baseURL.replace(/\/$/, "") + "/api/badge/" + this.monitor.id + "/" + this.badge.type;
 
             let parameterList = {};
 

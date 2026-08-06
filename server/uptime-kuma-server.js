@@ -12,7 +12,8 @@ const dayjs = require("dayjs");
 const childProcessAsync = require("promisify-child-process");
 const path = require("path");
 const axios = require("axios");
-const { isSSL, sslKey, sslCert, sslKeyPassphrase } = require("./config");
+const { isSSL, sslKey, sslCert, sslKeyPassphrase, basePath, basePathRoot } = require("./config");
+const { createBasePathMiddleware, withBasePath } = require("./base-path");
 // DO NOT IMPORT HERE IF THE MODULES USED `UptimeKumaServer.getInstance()`, put at the bottom of this file instead.
 
 /**
@@ -84,6 +85,7 @@ class UptimeKumaServer {
 
         log.info("server", "Creating express and socket.io instance");
         this.app = express();
+        this.app.use(createBasePathMiddleware(basePath));
         if (isSSL) {
             log.info("server", "Server Type: HTTPS");
             this.httpServer = https.createServer(
@@ -101,6 +103,18 @@ class UptimeKumaServer {
 
         try {
             this.indexHTML = fs.readFileSync("./dist/index.html").toString();
+
+            if (process.env.NODE_ENV !== "development") {
+                const builtBasePath = this.indexHTML.match(/<base href="([^"]+)"/i)?.[1];
+                if (builtBasePath !== basePathRoot) {
+                    log.error(
+                        "server",
+                        `Frontend was built for base path '${builtBasePath || "unknown"}', but ` +
+                            `UPTIME_KUMA_BASE_PATH is '${basePath}'. Rebuild the frontend with the same value.`
+                    );
+                    process.exit(1);
+                }
+            }
         } catch (e) {
             // "dist/index.html" is not necessary for development
             if (process.env.NODE_ENV !== "development") {
@@ -146,6 +160,7 @@ class UptimeKumaServer {
 
         this.io = new Server(this.httpServer, {
             cors,
+            path: withBasePath("/socket.io", basePath),
             allowRequest: async (req, callback) => {
                 let transport;
                 // It should be always true, but just in case, because this property is not documented

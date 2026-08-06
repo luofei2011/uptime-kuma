@@ -20,7 +20,7 @@ import dayjs from "dayjs";
 import timezone from "./modules/dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { loadToastSettings } from "./util-frontend";
+import { loadToastSettings, getBasePath, withBasePath } from "./util-frontend";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(relativeTime);
@@ -41,15 +41,19 @@ app.use(i18n);
 app.use(Toast, loadToastSettings());
 app.component("Editable", contenteditable);
 app.component("FontAwesomeIcon", FontAwesomeIcon);
+app.config.globalProperties.$withBasePath = withBasePath;
 
 app.mount("#app");
 
 // Service Worker
 // Mainly for Webpush notification
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/serviceWorker.js", { scope: "/" }).catch((error) => {
-        console.error("Service worker registration failed:", error);
-    });
+    const serviceWorkerScope = getBasePath() === "/" ? "/" : getBasePath() + "/";
+    navigator.serviceWorker
+        .register(withBasePath("/serviceWorker.js"), { scope: serviceWorkerScope })
+        .catch((error) => {
+            console.error("Service worker registration failed:", error);
+        });
 }
 
 // Expose the vue instance for development

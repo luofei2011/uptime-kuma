@@ -8,6 +8,7 @@ const { marked } = require("marked");
 const { Feed } = require("feed");
 const config = require("../config");
 const dayjs = require("dayjs");
+const { withBasePath } = require("../base-path");
 
 const { setting } = require("../util-server");
 const {
@@ -141,14 +142,14 @@ class StatusPage extends BeanModel {
                 host = request.headers["x-forwarded-host"];
             }
 
-            return `${proto}://${host}/status/${slug}`;
+            return `${proto}://${host}${withBasePath(`/status/${slug}`, config.basePath)}`;
         }
 
         // Fallback to config values
         const proto = config.isSSL ? "https" : "http";
         const host = config.hostname || "localhost";
         const port = config.port;
-        return `${proto}://${host}:${port}/status/${slug}`;
+        return `${proto}://${host}:${port}${withBasePath(`/status/${slug}`, config.basePath)}`;
     }
 
     /**
@@ -169,7 +170,7 @@ class StatusPage extends BeanModel {
         $("meta[name=description]").attr("content", description155);
 
         if (statusPage.icon) {
-            $("link[rel=icon]").attr("href", statusPage.icon).removeAttr("type");
+            $("link[rel=icon]").attr("href", withBasePath(statusPage.icon, config.basePath)).removeAttr("type");
 
             $("link[rel=apple-touch-icon]").remove();
         }
@@ -206,7 +207,10 @@ class StatusPage extends BeanModel {
         head.append(script);
 
         // manifest.json
-        $("link[rel=manifest]").attr("href", `/api/status-page/${statusPage.slug}/manifest.json`);
+        $("link[rel=manifest]").attr(
+            "href",
+            withBasePath(`/api/status-page/${statusPage.slug}/manifest.json`, config.basePath)
+        );
 
         return $.root().html();
     }

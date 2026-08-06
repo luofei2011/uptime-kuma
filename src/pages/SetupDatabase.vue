@@ -2,7 +2,7 @@
     <div v-if="show" class="form-container">
         <form @submit.prevent="submit">
             <div>
-                <object width="64" height="64" data="/icon.svg" />
+                <object width="64" height="64" :data="$withBasePath('/icon.svg')" />
                 <div style="font-size: 28px; font-weight: bold; margin-top: 5px">Uptime Kuma</div>
             </div>
 
@@ -215,7 +215,7 @@ export default {
         this.info = res.data;
 
         if (this.info && this.info.needSetup === false) {
-            location.href = "/setup";
+            location.href = this.$withBasePath("/setup");
         } else {
             this.show = true;
         }
@@ -243,7 +243,7 @@ export default {
                 let res = await axios.get("/setup-database-info");
                 if (res.data && res.data.needSetup === false) {
                     this.show = false;
-                    location.href = "/setup";
+                    location.href = this.$withBasePath("/setup");
                 } else {
                     if (res.data) {
                         this.info = res.data;

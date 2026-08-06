@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
-const serverUrl = require("../../config/playwright.config.js").url;
+const { appPath, basePath, url: serverUrl } = require("../../config/playwright.config.js");
+
+export { appPath, basePath };
 
 const dbPath = "./../../data/playwright-test/kuma.db";
 
@@ -49,7 +51,7 @@ export async function takeSqliteSnapshot(page = null) {
     if (page) {
         return page.goto("./_e2e/take-sqlite-snapshot");
     } else {
-        return fetch(`${serverUrl}/_e2e/take-sqlite-snapshot`);
+        return fetch(new URL("./_e2e/take-sqlite-snapshot", serverUrl));
     }
 }
 
@@ -58,5 +60,5 @@ export async function takeSqliteSnapshot(page = null) {
  * @returns {Promise<Response>} Promise of response from restoration request.
  */
 export async function restoreSqliteSnapshot() {
-    return fetch(`${serverUrl}/_e2e/restore-sqlite-snapshot`);
+    return fetch(new URL("./_e2e/restore-sqlite-snapshot", serverUrl));
 }

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { login, restoreSqliteSnapshot, screenshot } from "../util-test";
+import { appPath, login, restoreSqliteSnapshot, screenshot } from "../util-test";
 
 test.describe("Example Spec", () => {
     test.beforeEach(async ({ page }) => {
@@ -21,7 +21,7 @@ test.describe("Example Spec", () => {
         await page.getByTestId("friendly-name-input").fill("example.com");
         await page.getByTestId("url-input").fill("https://www.example.com/");
         await page.getByTestId("save-button").click();
-        await page.waitForURL("/dashboard/*"); // wait for the monitor to be created
+        await page.waitForURL(appPath("/dashboard/*")); // wait for the monitor to be created
 
         await expect(page.getByTestId("monitor-list")).toContainText("example.com");
         await screenshot(testInfo, page);

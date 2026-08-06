@@ -9,7 +9,7 @@
                 <li v-for="(remoteBrowser, index) in $root.remoteBrowserList" :key="index" class="list-group-item">
                     {{ remoteBrowser.name }}
                     <br />
-                    <a href="#" @click="$refs.remoteBrowserDialog.show(remoteBrowser.id)">{{ $t("Edit") }}</a>
+                    <a href="#" @click.prevent="$refs.remoteBrowserDialog.show(remoteBrowser.id)">{{ $t("Edit") }}</a>
                 </li>
             </ul>
 

@@ -6,7 +6,8 @@ const path = require("path");
 const Database = require("./database");
 const { allowDevAllOrigin, printServerUrls } = require("./util-server");
 const mysql = require("mysql2/promise");
-const { isSSL, sslKey, sslCert, sslKeyPassphrase } = require("./config");
+const { isSSL, sslKey, sslCert, sslKeyPassphrase, basePath, basePathRoot } = require("./config");
+const { createBasePathMiddleware, withBasePath } = require("./base-path");
 const https = require("https");
 
 /**
@@ -137,6 +138,7 @@ class SetupDatabase {
         return new Promise((resolve) => {
             const app = express();
             let tempServer;
+            app.use(createBasePathMiddleware(basePath));
             app.use(express.json());
 
             // Disable Keep Alive, otherwise the server will not shutdown, as the client will keep the connection alive
@@ -146,7 +148,7 @@ class SetupDatabase {
             });
 
             app.get("/", async (request, response) => {
-                response.redirect("/setup-database");
+                response.redirect(withBasePath("/setup-database", basePath));
             });
 
             app.get("/api/entry-page", async (request, response) => {
@@ -325,7 +327,7 @@ class SetupDatabase {
 
             tempServer = server.listen(port, hostname, () => {
                 log.info("setup-database", "Starting Setup Database");
-                printServerUrls("setup-database", port, hostname, isSSL);
+                printServerUrls("setup-database", port, hostname, isSSL, basePathRoot);
                 log.info("setup-database", "Waiting for user action...");
             });
         });

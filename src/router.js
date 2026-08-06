@@ -31,6 +31,7 @@ const Security = () => import("./components/settings/Security.vue");
 import Proxies from "./components/settings/Proxies.vue";
 import About from "./components/settings/About.vue";
 import RemoteBrowsers from "./components/settings/RemoteBrowsers.vue";
+import { getBasePath } from "./util-frontend";
 
 const routes = [
     {
@@ -193,6 +194,6 @@ const routes = [
 
 export const router = createRouter({
     linkActiveClass: "active",
-    history: createWebHistory(),
+    history: createWebHistory(getBasePath()),
     routes,
 });

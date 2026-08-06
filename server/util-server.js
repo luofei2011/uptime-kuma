@@ -1002,13 +1002,14 @@ module.exports.commandExists = commandExists;
  * @param {number} port Port number
  * @param {string} hostname Bound hostname, if any
  * @param {boolean} isHTTPS Whether the server is using HTTPS
+ * @param {string} pathname Public path appended to each URL
  * @returns {void}
  */
-module.exports.printServerUrls = (tag, port, hostname, isHTTPS = false) => {
+module.exports.printServerUrls = (tag, port, hostname, isHTTPS = false, pathname = "") => {
     try {
         // If hostname is specified, just print that one.
         if (hostname) {
-            log.info(tag, `Listening on: `, createURL(isHTTPS, hostname, port));
+            log.info(tag, `Listening on: `, createURL(isHTTPS, hostname, port) + pathname);
             return;
         }
 
@@ -1016,7 +1017,7 @@ module.exports.printServerUrls = (tag, port, hostname, isHTTPS = false) => {
         const nets = networkInterfaces();
 
         log.info(tag, "Listening on:");
-        log.info(tag, `- `, createURL(isHTTPS, "localhost", port));
+        log.info(tag, `- `, createURL(isHTTPS, "localhost", port) + pathname);
 
         // Prepare a list of valid address
         const addressList = [];
@@ -1042,7 +1043,7 @@ module.exports.printServerUrls = (tag, port, hostname, isHTTPS = false) => {
         for (const address of addressList) {
             if (!address.internal) {
                 const host = address.family === "IPv6" ? `[${address.address}]` : address.address;
-                log.info(tag, `- `, createURL(isHTTPS, host, port));
+                log.info(tag, `- `, createURL(isHTTPS, host, port) + pathname);
             }
         }
     } catch (e) {

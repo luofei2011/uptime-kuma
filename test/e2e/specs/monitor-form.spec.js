@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { login, restoreSqliteSnapshot, screenshot } from "../util-test";
+import { appPath, login, restoreSqliteSnapshot, screenshot } from "../util-test";
 
 /**
  * Selects the monitor type from the dropdown.
@@ -71,7 +71,7 @@ test.describe("Monitor Form", () => {
 
         await screenshot(testInfo, page);
         await page.getByTestId("save-button").click();
-        await page.waitForURL("/dashboard/*");
+        await page.waitForURL(appPath("/dashboard/*"));
 
         await expect(page.getByTestId("monitor-status")).toHaveText("up", { ignoreCase: true });
 
@@ -99,7 +99,7 @@ test.describe("Monitor Form", () => {
 
         await screenshot(testInfo, page);
         await page.getByTestId("save-button").click();
-        await page.waitForURL("/dashboard/*");
+        await page.waitForURL(appPath("/dashboard/*"));
 
         await expect(page.getByTestId("monitor-status")).toHaveText("down", { ignoreCase: true });
 
@@ -124,10 +124,10 @@ test.describe("Monitor Form", () => {
 
         await screenshot(testInfo, page);
         await page.getByTestId("save-button").click();
-        await page.waitForURL("/dashboard/*");
+        await page.waitForURL(appPath("/dashboard/*"));
 
         await page.getByRole("link", { name: "Edit" }).click();
-        await page.waitForURL("/edit/*");
+        await page.waitForURL(appPath("/edit/*"));
 
         await expect(page.getByLabel("Save HTTP Success Response for Notifications")).toBeHidden();
         await expect(page.getByLabel("Save HTTP Error Response for Notifications")).not.toBeChecked();

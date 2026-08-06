@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { login, restoreSqliteSnapshot, screenshot } from "../util-test";
+import { appPath, login, restoreSqliteSnapshot, screenshot } from "../util-test";
 
 test.describe("Status Page", () => {
     test.beforeEach(async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe("Status Page", () => {
         await page.getByTestId("add-tags-final-button").click();
 
         await page.getByTestId("save-button").click();
-        await page.waitForURL("/dashboard/*"); // wait for the monitor to be created
+        await page.waitForURL(appPath("/dashboard/*")); // wait for the monitor to be created
 
         // Create a new status page
         await page.goto("./add-status-page");
@@ -72,7 +72,7 @@ test.describe("Status Page", () => {
         await page.getByTestId("name-input").fill("Example");
         await page.getByTestId("slug-input").fill("example");
         await page.getByTestId("submit-button").click();
-        await page.waitForURL("/status/example?edit"); // wait for the page to be created
+        await page.waitForURL(appPath("/status/example?edit")); // wait for the page to be created
 
         // Fill in some details
         await page.getByTestId("description-input").fill(descriptionText);
@@ -230,7 +230,7 @@ test.describe("Status Page", () => {
         await page.getByTestId("friendly-name-input").fill(maliciousMonitorName1);
         await page.getByTestId("url-input").fill("https://malicious1.example.com");
         await page.getByTestId("save-button").click();
-        await page.waitForURL("/dashboard/*");
+        await page.waitForURL(appPath("/dashboard/*"));
 
         // Create second monitor with title breakout payload
         await page.goto("./add");
@@ -238,7 +238,7 @@ test.describe("Status Page", () => {
         await page.getByTestId("friendly-name-input").fill(maliciousMonitorName2);
         await page.getByTestId("url-input").fill("https://malicious2.example.com");
         await page.getByTestId("save-button").click();
-        await page.waitForURL("/dashboard/*");
+        await page.waitForURL(appPath("/dashboard/*"));
 
         // Create third monitor with normal name
         await page.goto("./add");
@@ -246,14 +246,14 @@ test.describe("Status Page", () => {
         await page.getByTestId("friendly-name-input").fill(normalMonitorName);
         await page.getByTestId("url-input").fill("https://normal.example.com");
         await page.getByTestId("save-button").click();
-        await page.waitForURL("/dashboard/*");
+        await page.waitForURL(appPath("/dashboard/*"));
 
         // Create a status page
         await page.goto("./add-status-page");
         await page.getByTestId("name-input").fill("Security Test");
         await page.getByTestId("slug-input").fill("security-test");
         await page.getByTestId("submit-button").click();
-        await page.waitForURL("/status/security-test?edit");
+        await page.waitForURL(appPath("/status/security-test?edit"));
 
         // Add a group and all monitors
         await page.getByTestId("add-group-button").click();
@@ -271,7 +271,7 @@ test.describe("Status Page", () => {
         await expect(page.getByTestId("edit-sidebar")).toHaveCount(0);
 
         // Fetch the RSS feed
-        const rssResponse = await page.request.get("/status/security-test/rss");
+        const rssResponse = await page.request.get(appPath("/status/security-test/rss"));
         expect(rssResponse.status()).toBe(200);
         expect(rssResponse.headers()["content-type"]).toBe("application/rss+xml; charset=utf-8");
         expect(rssResponse.ok()).toBeTruthy();
@@ -309,7 +309,7 @@ test.describe("Status Page", () => {
         await expect(page.getByTestId("edit-sidebar")).toHaveCount(0);
 
         // Fetch RSS feed again - should use custom RSS title
-        const rssResponseCustom = await page.request.get("/status/security-test/rss");
+        const rssResponseCustom = await page.request.get(appPath("/status/security-test/rss"));
         expect(rssResponseCustom.status()).toBe(200);
         const rssContentCustom = await rssResponseCustom.text();
 

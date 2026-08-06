@@ -105,6 +105,7 @@ log.debug("server", "Importing prometheus-api-metrics");
 const prometheusAPIMetrics = require("prometheus-api-metrics");
 const { passwordStrength } = require("check-password-strength");
 const TranslatableError = require("./translatable-error");
+const { withBasePath } = require("./base-path");
 
 log.debug("server", "Importing 2FA Modules");
 const notp = require("notp");
@@ -279,9 +280,11 @@ let needSetup = false;
             let slug = StatusPage.domainMappingList[hostname];
             await StatusPage.handleStatusPageResponse(response, server.indexHTML, slug);
         } else if (uptimeKumaEntryPage && uptimeKumaEntryPage.startsWith("statusPage-")) {
-            response.redirect("/status/" + uptimeKumaEntryPage.replace("statusPage-", ""));
+            response.redirect(
+                withBasePath("/status/" + uptimeKumaEntryPage.replace("statusPage-", ""), config.basePath)
+            );
         } else {
-            response.redirect("/dashboard");
+            response.redirect(withBasePath("/dashboard", config.basePath));
         }
     });
 
@@ -378,7 +381,7 @@ let needSetup = false;
 
     // Universal Route Handler, must be at the end of all express routes.
     app.get("*", async (_request, response) => {
-        if (_request.originalUrl.startsWith("/upload/")) {
+        if (_request.path.startsWith("/upload/")) {
             response.status(404).send("File not found.");
         } else {
             response.send(server.indexHTML);
@@ -1769,7 +1772,7 @@ let needSetup = false;
     await server.start();
 
     server.httpServer.listen(port, hostname, async () => {
-        printServerUrls("server", port, hostname, config.isSSL);
+        printServerUrls("server", port, hostname, config.isSSL, config.basePathRoot);
 
         await startMonitors();
 
